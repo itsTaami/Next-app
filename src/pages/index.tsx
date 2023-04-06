@@ -45,7 +45,7 @@ interface IMovies {
   movies: IMovie[];
 }
 
-export default function Home({ movies }: IMovies) {
+export default function Home({ movies, pagination }: IMovies) {
   // const [movies, setMovies] = useState<IMovie[]>([]);
 
   // const getMovies = async () => {
@@ -140,7 +140,11 @@ export default function Home({ movies }: IMovies) {
           ))}
         </div>
         <div className="flex justify-center my-10">
-          <Pagination />
+          <Pagination
+            total={pagination.total}
+            pageCount={pagination.pageCount}
+            page={pagination.page}
+          />
         </div>
         {/* <div>
           <Link className="text-white" href="/about">
@@ -162,12 +166,15 @@ export default function Home({ movies }: IMovies) {
   );
 }
 
-export async function getServerSideProps() {
-  const res = await fetch("http://localhost:8005/movies");
+export async function getServerSideProps(ctx: any) {
+  const { limit, page } = ctx.query;
+  const res = await fetch(
+    `http://localhost:8005/movies?limit=${limit}&page=${page}`
+  );
   const data = await res.json();
-  console.log("============>", data);
+  console.log("============>", data, ctx);
 
   return {
-    props: { movies: data.movies },
+    props: { movies: data.movies, pagination: data.pagination },
   };
 }

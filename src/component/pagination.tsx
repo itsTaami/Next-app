@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useRouter } from "next/router";
 
-const Pagination = () => {
+const Pagination = ({ total, pageCount }: any, page: [Number]) => {
+  const router = useRouter();
   let [num, setNum] = useState(1);
 
   let [cur, setCur] = useState(1);
@@ -15,10 +17,15 @@ const Pagination = () => {
   ];
 
   function Next() {
-    setNum(++num);
+    num > 1 && setNum(++num);
+    setCur((pre) => pre + 1);
+    router.push(`/?limit=4&page${cur + 1}`);
   }
 
   function Back() {
+    num > 1 && setNum(--num);
+    setCur((pre) => pre - 1);
+    router.push(`/?limit=4&page=${cur - 1}`);
     num > 1 && setNum(--num);
   }
 
