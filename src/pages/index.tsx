@@ -3,9 +3,7 @@ import Link from "next/link";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
-
-import Count from "../../component/count";
-import { useEffect, useState } from "react";
+import Pagination from "../component/pagination";
 
 const inter = Inter({ subsets: ["latin"] });
 interface IAwards {
@@ -14,6 +12,7 @@ interface IAwards {
   text: String;
 }
 interface IMovie {
+  _id: string;
   title: String;
   genre: [String];
   runtime: number;
@@ -101,7 +100,7 @@ export default function Home({ movies }: IMovies) {
             ))}
           </div> */}
           {movies.map((movie, idx) => (
-            <div className="p-2 ">
+            <div key={idx} className="p-2 ">
               <div className="h-3/4 w-full flex bg-slate-500 rounded-2xl hover:bg-slate-400 ">
                 <div className="w-2/5 ">
                   <Image
@@ -117,11 +116,21 @@ export default function Home({ movies }: IMovies) {
                     {movie.title}
                   </div>
                   <p className="text-white text-base">{movie.plot}</p>
+
+                  <p>
+                    <Link
+                      className="text-orange-400"
+                      href={`movies/${movie._id}`}
+                    >
+                      {movie.title}
+                    </Link>
+                  </p>
+
                   <div className="text-sm flex justify-between">
-                    <p className="  leading-none text-white text-3xl border w-2/6 text-center rounded-2xl">
+                    <p className="  leading-none text-white text-3xl border w-2/6  self-center text-center rounded-2xl">
                       🍅 {movie.tomatoes.viewer.meter || "00"}%
                     </p>
-                    <p className="text-black leading-none text-2xl border w-1/4 self-center text-center rounded-2xl bg-yellow-400">
+                    <p className="text-black leading-none text-3xl border w-2/6 self-center text-center rounded-2xl bg-yellow-400">
                       🍿 {movie.imdb.rating}
                     </p>
                   </div>
@@ -129,6 +138,9 @@ export default function Home({ movies }: IMovies) {
               </div>
             </div>
           ))}
+        </div>
+        <div className="flex justify-center my-10">
+          <Pagination />
         </div>
         {/* <div>
           <Link className="text-white" href="/about">
@@ -153,6 +165,8 @@ export default function Home({ movies }: IMovies) {
 export async function getServerSideProps() {
   const res = await fetch("http://localhost:8005/movies");
   const data = await res.json();
+  console.log("============>", data);
+
   return {
     props: { movies: data.movies },
   };
